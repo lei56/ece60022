@@ -13,7 +13,7 @@ typedef struct links {
     link_t * transmitter_to_user_link[NUM_OF_TXERS][NUM_OF_USERS];
 } links_t;
 
-links_t create_links();
-void free_links(links_t);
+links_t * create_links();
+void free_links(links_t *);
 
 #endif

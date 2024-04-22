@@ -15,9 +15,18 @@ endif
 
 INCLUDE = $(INCLUDEDIR)/*.h
 
-OBJ = $(OBJDIR)/buffer.o \
-	  $(OBJDIR)/memory.o
-
+OBJ = $(OBJDIR)/arguments.o \
+	  $(OBJDIR)/buffer.o \
+	  $(OBJDIR)/cdn.o \
+	  $(OBJDIR)/driver.o \
+	  $(OBJDIR)/edge.o \
+	  $(OBJDIR)/flow.o \
+	  $(OBJDIR)/link.o \
+	  $(OBJDIR)/links.o \
+	  $(OBJDIR)/memory.o \
+	  $(OBJDIR)/packet.o \
+	  $(OBJDIR)/transmitter.o \
+	  $(OBJDIR)/user.o
 
 default: all
 

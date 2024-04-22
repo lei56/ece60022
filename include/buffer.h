@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include "params.h"
 
 #define NULL_TEST(ptr, line_num) \
     if (ptr == NULL) \
@@ -24,10 +25,10 @@ typedef struct buffer {
     int tail;
 } buffer_t;
 
-buffer_t * create_buffer(int32_t size);
+buffer_t * create_buffer(int size);
 int buffer_push(buffer_t * self, void * element);
 int buffer_pop(buffer_t * self, void * element);
-int buffer_peek(buffer_t * self, int32_t index, void * element);
+int buffer_peek(buffer_t * self, int index, void * element);
 void flush_buffer(buffer_t * self);
 void free_buffer(buffer_t * self);
 

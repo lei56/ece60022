@@ -1,6 +1,6 @@
 #include "buffer.h"
 
-buffer_t * create_buffer(int32_t size)
+buffer_t * create_buffer(int size)
 {
     buffer_t * self = NULL;
     if (size > 0) {
@@ -51,7 +51,7 @@ int buffer_pop(buffer_t * self, void * element) {
     return 0;
 }
 
-int buffer_peek(buffer_t * self, int32_t index, void * element) {
+int buffer_peek(buffer_t * self, int index, void * element) {
     // check if index request is valid
     if (self == NULL || index >= self->size || (index >= self->head && index <= self->tail)) {
         return -1;

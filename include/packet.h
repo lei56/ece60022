@@ -8,6 +8,7 @@ typedef struct packet {
     int src;
     int dst;
     int flow_id;
+    int content_id;
     
     // statistics
     int time_request_sent;
@@ -17,6 +18,6 @@ typedef struct packet {
     
 } packet_t;
 
-packet_t * create_packet(int src, int dst, int flow_id);
+packet_t * create_packet(int src, int dst, int flow_id, int content_id);
 
 #endif

@@ -45,7 +45,7 @@ links_t * create_links()
     return self;
 }
 
-void free_links(links_t self)
+void free_links(links_t * self)
 {
     if (self != NULL) {
         for (int i = 0; i < NUM_OF_USERS; ++i) {

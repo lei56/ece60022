@@ -10,7 +10,7 @@ typedef struct link {
     buffer_t * fifo;
 } link_t;
 
-link_t create_link(int, int, int);
+link_t * create_link(int, int, int);
 void link_enqueue(link_t * self, void * element);
 void * link_dequeue(link_t * self);
 void * link_peek(link_t * self);

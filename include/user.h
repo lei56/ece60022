@@ -10,7 +10,7 @@ typedef struct user {
     flow_t * flow;
     int pkts_sent;
     int pkts_received;
-    float avg_pkt_delay;
+    float avg_content_delay;
 } user_t;
  
 user_t * create_user(int index);

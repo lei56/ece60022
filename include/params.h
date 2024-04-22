@@ -31,12 +31,16 @@
         {printf("error: %s:%d malloc() failed\n", __FILE__, line_num); \
         exit(0);}
 
-#define NUM_OF_USERS 2
-#define NUM_OF_TXERS 10
-#define NUM_OF_EDGES 10
-#define NUM_OF_CDNS 1
+#define USERS_PER_TXER 2
+#define TXERS_PER_EDGE 10
+#define EDGES_PER_CDN 10
 
-#define BUFFER_LENGTH 64
+#define NUM_OF_CDNS 1
+#define NUM_OF_EDGES (NUM_OF_CDNS * EDGES_PER_CDN)
+#define NUM_OF_TXERS (NUM_OF_EDGES * TXERS_PER_EDGE)
+#define NUM_OF_USERS (NUM_OF_TXERS * USERS_PER_TXER)
+
+#define BUFFER_LENGTH 8
 #define LINK_CAPACITY 50
 
 #define MTU 1500

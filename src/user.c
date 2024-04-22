@@ -7,11 +7,16 @@ user_t * create_user(int index) {
     self->flow = NULL;
     self->pkts_sent = 0;
     self->pkts_received = 0;
-    self->avg_pkt_delay = 0;
+    self->avg_content_delay = 0;
+
+    return self;
 }
 
 void free_user(user_t * user) {
     if (user != NULL) {
+        if (user->flow != NULL) {
+            free(user->flow);
+        }
         free(user);
     }
 }
