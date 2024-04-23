@@ -47,7 +47,7 @@ int cdn_process_packets(cdn_t * cdn, int timeslot) {
 
         // update loop variables
         pkts_sent++;
-        pkt = NULL;
+        pkt = buffer_peek(cdn->ingress_buffer, cdn->ingress_buffer->tail);
     }
     return pkts_sent;
 }

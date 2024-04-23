@@ -36,6 +36,7 @@ int user_receive_packets(user_t * self, links_t * links, int timeslot) {
         self->avg_content_delay = (self->avg_content_delay * self->pkts_received + pkt_in_flight_time) / (self->pkts_received + 1);
         self->pkts_received++;
         free(pkt);
+        return 1;
     }
 
     return 0;
@@ -48,7 +49,7 @@ int user_send_packets(user_t * self, links_t * links, int timeslot, int load) {
         // send packet if flow has packets remaining available
         flow_t * flow = self->flow;
         if (flow != NULL && self->pkts_sent < flow->flow_size) {
-            int content_id = rand() % flow->content_ids;
+            int content_id = rand() % flow->content_ids + self->index;
             packet_t * pkt = create_packet(self->index, 0, flow->flow_id, content_id);
             // update statistics
             pkt->time_request_sent = timeslot;

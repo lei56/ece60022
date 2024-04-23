@@ -11,36 +11,39 @@ link_t * create_link(int src, int dst, int capacity, int propagation_delay) {
     return self;
 }
 
-void link_enqueue(link_t * self, void * element) {
+void link_enqueue(link_t * self, packet_t * packet) {
     NULL_TEST(self, __LINE__);
-    element->time_to_dequeue_from_link = self->propagation_delay;
-    assert(buffer_push(self->fifo, element) != -1);
+    packet->time_to_dequeue_from_link = self->propagation_delay;
+    assert(buffer_push(self->fifo, packet) != -1);
 }
 
-void * link_dequeue(link_t * self) {
+packet_t * link_dequeue(link_t * self) {
     NULL_TEST(self, __LINE__);
-    void * element = buffer_peek(self->fifo, self->fifo->tail);
-    if (element != NULL && element->time_to_dequeue_from_link <= 0) {
-        void * element = buffer_pop(self->fifo);
-        assert(element != NULL);
-        return element;
+    packet_t * packet = buffer_peek(self->fifo, self->fifo->tail);
+    if (packet != NULL && packet->time_to_dequeue_from_link <= 0) {
+        packet_t * packet = buffer_pop(self->fifo);
+        assert(packet != NULL);
+        return packet;
     }
     return NULL;
 }
 
-void * link_peek(link_t * self) {
+packet_t * link_peek(link_t * self) {
     NULL_TEST(self, __LINE__);
-    void * element = buffer_peek(self->fifo, self->fifo->tail);
-    assert(element != NULL);
-    return element;
+    packet_t * packet = buffer_peek(self->fifo, self->fifo->tail);
+    assert(packet != NULL);
+    return packet;
 }
 
 void update_link(link_t * self) {
     buffer_t * buffer = self->fifo;
     int curr = buffer->tail;
-    while (curr < head) {
-        void * element = buffer_peek(buffer, curr);
-        element->time_to_dequeue_from_link--;
+    while (curr < buffer->head) {
+        packet_t * packet = buffer_peek(buffer, curr);
+        packet->time_to_dequeue_from_link--;
+        if (packet->time_to_dequeue_from_link < 0) {
+            packet->time_to_dequeue_from_link = 0;
+        }
         curr++;
     }
 

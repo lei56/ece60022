@@ -3,6 +3,7 @@
 
 #include "params.h"
 #include "buffer.h"
+#include "packet.h"
 
 typedef struct link {
     int src_node;
@@ -12,9 +13,9 @@ typedef struct link {
 } link_t;
 
 link_t * create_link(int, int, int, int);
-void link_enqueue(link_t * self, void * element);
-void * link_dequeue(link_t * self);
-void * link_peek(link_t * self);
+void link_enqueue(link_t * self, packet_t * packet);
+packet_t * link_dequeue(link_t * self);
+packet_t * link_peek(link_t * self);
 void update_link(link_t * self);
 void free_link(link_t * self);
 

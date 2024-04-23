@@ -5,8 +5,8 @@ int timeslot_len = 100; // number of ns per timeslot
 int curr_timeslot = 0;
 int enable_edge_caching = 1;
 int enable_transmitter_caching = 1;
-int load = 100; // load value 1-100: frequency of packet generation = load%
-int max_timeslot = 10000;
+int load = 10; // load value 1-100: frequency of packet generation = load%
+int pkts_received = 0;
 
 // network
 user_t * users[NUM_OF_USERS];
@@ -67,7 +67,7 @@ void work_per_timeslot() {
 /*---------------------------------------------------------------------------*/
         for (int i = 0; i < NUM_OF_USERS; i++) {
             user_t * user = users[i];
-            user_receive_packets(user, links, curr_timeslot);
+            pkts_received += user_receive_packets(user, links, curr_timeslot);
         }
 
 /*---------------------------------------------------------------------------*/
@@ -120,7 +120,10 @@ void work_per_timeslot() {
 /*---------------------------------------------------------------------------*/
                                   //PARAMETERS -- UPDATE
 /*---------------------------------------------------------------------------*/
-        if (curr_timeslot >= max_timeslot) {
+        if (pkts_received >= MAX_PACKETS_RECEIVED) {
+            return;
+        }
+        if (curr_timeslot >= MAX_TIMESLOT) {
             return;
         }
         curr_timeslot++;
