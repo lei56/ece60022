@@ -42,6 +42,7 @@
 
 #define BUFFER_LENGTH 8
 #define LINK_CAPACITY 50
+#define MAX_CONTENT_IDS_PER_USER 10
 
 #define MTU 1500
 

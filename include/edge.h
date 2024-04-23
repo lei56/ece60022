@@ -5,6 +5,7 @@
 #include "buffer.h"
 #include "packet.h"
 #include "memory.h"
+#include "links.h"
 
 typedef struct edge {
     int index;
@@ -18,9 +19,16 @@ typedef struct edge {
     cache_t * cache;
     // packet processing speed per timeslot
     int pkts_per_ts;
+    // cache at edge if enabled
+    int cache_enabled;
 } edge_t;
 
-edge_t * create_edge(int index, int cache_capacity, int memory_speed);
+edge_t * create_edge(int index, int cache_capacity, int memory_speed, int enabled);
 void free_edge(edge_t * self);
+int edge_process_packets(edge_t * self, int timeslot);
+int edge_process_packets_upstream(edge_t * self, int timeslot);
+int edge_process_packets_downstream(edge_t * self, int timeslot);
+int edge_receive_packets(edge_t * self, links_t * links);
+int edge_send_packets(edge_t * self, links_t * links);
 
 #endif

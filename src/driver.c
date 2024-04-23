@@ -3,8 +3,10 @@
 // parameters
 int timeslot_len = 100; // number of ns per timeslot
 int curr_timeslot = 0;
-int enable_edge_caching = 1;
-int enable_transmitter_caching = 1;
+int enable_edge_caching = 0;
+int enable_transmitter_caching = 0;
+int load = 100; // load value 1-100: frequency of packet generation = load%
+int max_timeslot = 100;
 
 // network
 user_t * users[NUM_OF_USERS];
@@ -13,12 +15,106 @@ edge_t * edges[NUM_OF_EDGES];
 cdn_t * cdn;
 links_t * links;
 
+void work_per_timeslot() {
+    printf("Simulation started\n");
+    srand(time(NULL));
+
+    while (1) {
+/*---------------------------------------------------------------------------*/
+                                  //CDN -- PROCESS
+/*---------------------------------------------------------------------------*/
+        cdn_process_packets(cdn, curr_timeslot);
+
+/*---------------------------------------------------------------------------*/
+                                  //EDGE -- PROCESS
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_EDGES; i++) {
+            edge_t * edge = edges[i];
+            edge_process_packets(edge, curr_timeslot);
+        }
+
+/*---------------------------------------------------------------------------*/
+                                  //TXER -- PROCESS
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_TXERS; i++) {
+            transmitter_t * txer = transmitters[i];
+            transmitter_process_packets(txer, curr_timeslot);
+        }
+        
+/*---------------------------------------------------------------------------*/
+                                  //CDN -- RECEIVE
+/*---------------------------------------------------------------------------*/
+        cdn_receive_packets(cdn, links, curr_timeslot);
+
+/*---------------------------------------------------------------------------*/
+                                  //EDGE -- RECEIVE
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_EDGES; i++) {
+            edge_t * edge = edges[i];
+            edge_receive_packets(edge, links);
+        }
+
+/*---------------------------------------------------------------------------*/
+                                  //TXER -- RECEIVE
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_TXERS; i++) {
+            transmitter_t * txer = transmitters[i];
+            transmitter_receive_packets(txer, links);
+        }
+
+/*---------------------------------------------------------------------------*/
+                                  //USER -- RECEIVE
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_USERS; i++) {
+            user_t * user = users[i];
+            user_receive_packets(user, links, curr_timeslot);
+        }
+
+/*---------------------------------------------------------------------------*/
+                                  //CDN -- SEND
+/*---------------------------------------------------------------------------*/
+        cdn_send_packets(cdn, links, curr_timeslot);
+
+/*---------------------------------------------------------------------------*/
+                                  //EDGE -- SEND
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_EDGES; i++) {
+            edge_t * edge = edges[i];
+            edge_send_packets(edge, links);
+        }
+
+/*---------------------------------------------------------------------------*/
+                                  //TXER -- SEND
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_TXERS; i++) {
+            transmitter_t * txer = transmitters[i];
+            transmitter_send_packets(txer, links);
+        }
+
+/*---------------------------------------------------------------------------*/
+                                  //USER -- SEND
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_USERS; i++) {
+            user_t * user = users[i];
+            user_send_packets(user, links, curr_timeslot, load);
+        }
+
+/*---------------------------------------------------------------------------*/
+                                  //UPDATE PARAMETERS
+/*---------------------------------------------------------------------------*/
+        if (curr_timeslot >= max_timeslot) {
+            return;
+        }
+        curr_timeslot++;
+    }
+}
+
 arguments_t * process_args(int argc, char ** argv) {
     arguments_t * arguments = create_arguments();
     int opt;
     char out_suffix[4] = ".out";
 
-    while ((opt = getopt(argc, argv, "f:a:b:c:x:y:z:m:e:t"))) {
+    while ((opt = getopt(argc, argv, "f:a:b:c:x:y:z:m:e:t:")) != -1) {
         switch(opt) {
             case 'f':
                 if (strlen(optarg) < 500) {
@@ -49,11 +145,15 @@ arguments_t * process_args(int argc, char ** argv) {
                 arguments->txer_memory_access_delay = atoi(optarg);
                 arguments->edge_memory_access_delay = atoi(optarg);
                 arguments->cdn_memory_access_delay = atoi(optarg);
+                break;
             case 'e':
-                arguments->enable_edge_caching = atoi(optarg);
+                enable_edge_caching = 0;
+                printf("disabled edge caching\n");
                 break;
             case 't':
-                arguments->enable_transmitter_caching = atoi(optarg);
+                enable_transmitter_caching = 0;
+                printf("disabled transmitter caching\n");
+                break;
             default:
                 printf("wrong command line argument\n");
                 exit(1);
@@ -97,11 +197,11 @@ void initialize_network(arguments_t * arguments) {
     }
     // create transmitters
     for (int i = 0; i < NUM_OF_TXERS; i++) {
-        transmitters[i] = create_transmitter(i, arguments->txer_cache_size, arguments->txer_memory_access_delay);
+        transmitters[i] = create_transmitter(i, arguments->txer_cache_size, arguments->txer_memory_access_delay, enable_transmitter_caching);
     }
     // create edges
     for (int i = 0; i < NUM_OF_EDGES; i++) {
-        edges[i] = create_edge(i, arguments->edge_cache_size, arguments->edge_memory_access_delay);
+        edges[i] = create_edge(i, arguments->edge_cache_size, arguments->edge_memory_access_delay, enable_edge_caching);
     }
     // create cdn
     cdn = create_cdn(0, arguments->cdn_cache_size, arguments->cdn_memory_access_delay);
@@ -109,6 +209,23 @@ void initialize_network(arguments_t * arguments) {
     links = create_links();
 
     return;
+}
+
+void evaluate_network() {
+    float avg_delay = 0;
+    int active_users = 0;
+    for (int i = 0; i < NUM_OF_USERS; i++) {
+        user_t * user = users[i];
+        
+        if (user->pkts_received > 0) {
+            avg_delay += user->avg_content_delay;
+            active_users++;
+        }
+        
+    }
+    avg_delay /= active_users;
+    avg_delay *= timeslot_len;
+    printf("Average content delay: %0.0f ns\n", avg_delay);
 }
 
 void free_network() {
@@ -120,7 +237,7 @@ void free_network() {
     for (int i = 0; i < NUM_OF_TXERS; i++) {
         free_transmitter(transmitters[i]);
     }
-    // freeedges
+    // free edges
     for (int i = 0; i < NUM_OF_EDGES; i++) {
         free_edge(edges[i]);
     }
@@ -138,7 +255,9 @@ int main(int argc, char ** argv) {
     read_tracefile(arguments->filename);
     free_arguments(arguments);
 
+    work_per_timeslot();
 
+    evaluate_network();
     free_network();
 
     printf("finished execution\n");

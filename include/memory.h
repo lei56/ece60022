@@ -25,6 +25,7 @@ int cache_push(cache_t * cache, qnode_t * node);
 qnode_t * cache_pop(cache_t * cache);
 qnode_t * cache_extract(cache_t * cache, qnode_t * node);
 int cache_check(cache_t * cache, int content_id, int current_time);
+int cache_peek(cache_t * cache, int content_id, int current_time);
 void cache_fetch(cache_t * cache, int content_id);
 void cache_evict(cache_t * cache);
 void free_qnode(qnode_t * qnode);

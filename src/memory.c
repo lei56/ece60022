@@ -113,9 +113,6 @@ qnode_t * cache_extract(cache_t * cache, qnode_t * node) {
 }
 
 int cache_check(cache_t * cache, int content_id, int current_time) {
-    if (current_time < cache->lock_until_time) {
-        return -1;
-    }
     qnode_t * curr_node = cache->head;
     while (curr_node != NULL) {
         // cache hit
@@ -128,9 +125,28 @@ int cache_check(cache_t * cache, int content_id, int current_time) {
         curr_node = curr_node->next;
     }
     // cache miss
+    if (current_time < cache->lock_until_time) {
+        return -1;
+    }
     cache_fetch(cache, content_id);
     cache->lock_until_time = current_time + cache->backing_memory_access_latency;
     return cache->lock_until_time;
+}
+
+int cache_peek(cache_t * cache, int content_id, int current_time) {
+    qnode_t * curr_node = cache->head;
+    while (curr_node != NULL) {
+        // cache hit
+        if (curr_node->content_id == content_id) {
+            // bring node to front of list
+            qnode_t * node = cache_extract(cache, curr_node);
+            cache_push(cache, node);
+            return current_time;
+        }
+        curr_node = curr_node->next;
+    }
+    // cache miss
+    return -1;
 }
 
 void cache_fetch(cache_t * cache, int content_id) {

@@ -27,8 +27,8 @@ typedef struct buffer {
 
 buffer_t * create_buffer(int size);
 int buffer_push(buffer_t * self, void * element);
-int buffer_pop(buffer_t * self, void * element);
-int buffer_peek(buffer_t * self, int index, void * element);
+void * buffer_pop(buffer_t * self);
+void * buffer_peek(buffer_t * self, int index);
 void flush_buffer(buffer_t * self);
 void free_buffer(buffer_t * self);
 

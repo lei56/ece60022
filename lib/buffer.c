@@ -27,6 +27,7 @@ int buffer_push(buffer_t * self, void * element) {
     }
     // check if buffer is full
     if (next == self->tail) {
+        free(element);
         return -1;
     }
     // place object into buffer
@@ -35,7 +36,7 @@ int buffer_push(buffer_t * self, void * element) {
     return 0;
 }
 
-int buffer_pop(buffer_t * self, void * element) {
+void * buffer_pop(buffer_t * self) {
     // next is where tail will point after pop
     int next = self->tail + 1;
     if (next >= self->size) {
@@ -43,29 +44,28 @@ int buffer_pop(buffer_t * self, void * element) {
     }
     // check if buffer is empty
     if (self->head == self->tail) {
-        return -1;
+        return NULL;
     }
     // retrieve element from buffer
-    element = self->buffer[self->tail];
+    void * element = self->buffer[self->tail];
     self->tail = next;
-    return 0;
+    return element;
 }
 
-int buffer_peek(buffer_t * self, int index, void * element) {
+void * buffer_peek(buffer_t * self, int index) {
     // check if index request is valid
     if (self == NULL || index >= self->size || (index >= self->head && index <= self->tail)) {
-        return -1;
+        return NULL;
     }
     // retrieve element from buffer
-    element = self->buffer[index];
-    return 0;
+    return self->buffer[index];
 }
 
 void flush_buffer(buffer_t * self) {
     if (self != NULL && self->buffer != NULL) {
         while (self->head != self->tail) {
             void * element = NULL;
-            buffer_pop(self, element);
+            element = buffer_pop(self);
             if (element != NULL) {
                 free(element);
             }

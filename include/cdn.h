@@ -5,6 +5,7 @@
 #include "buffer.h"
 #include "packet.h"
 #include "memory.h"
+#include "links.h"
 
 typedef struct cdn {
     int index;
@@ -20,5 +21,8 @@ typedef struct cdn {
 
 cdn_t * create_cdn(int index, int cache_capacity, int memory_speed);
 void free_cdn(cdn_t * self);
+int cdn_process_packets(cdn_t * self, int timeslot);
+int cdn_receive_packets(cdn_t * self, links_t * links, int timeslot);
+int cdn_send_packets(cdn_t * self, links_t * links, int timeslot);
 
 #endif

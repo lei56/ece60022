@@ -20,5 +20,6 @@ arguments_t * process_args(int argc, char ** argv);
 void read_tracefile(char * filename);
 void initialize_network(arguments_t * arguments);
 void free_network();
+void evaluate_network();
 
 #endif
