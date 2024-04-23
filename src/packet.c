@@ -11,6 +11,7 @@ packet_t * create_packet(int src, int dst, int flow_id, int content_id) {
     pkt->time_request_received = 0;
     pkt->time_content_sent = 0;
     pkt->time_content_received = 0;
+    pkt->time_to_dequeue_from_link = 0;
 
     return pkt;
 }

@@ -16,6 +16,8 @@ typedef struct packet {
     int time_content_sent;
     int time_content_received;
     
+    int time_to_dequeue_from_link;
+    
 } packet_t;
 
 packet_t * create_packet(int src, int dst, int flow_id, int content_id);

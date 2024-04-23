@@ -1,44 +1,44 @@
 #include "links.h"
 #include <params.h>
 
-links_t * create_links()
+links_t * create_links(int user_txer_delay, int txer_edge_delay, int edge_cdn_delay)
 {
     links_t * self = (links_t *) malloc(sizeof(links_t));
     MALLOC_TEST(self, __LINE__);
 
     for (int i = 0; i < NUM_OF_USERS; ++i) {
         for (int j = 0; j < NUM_OF_TXERS; ++j) {
-            self->user_to_transmitter_link[i][j] = create_link(i, j, LINK_CAPACITY);
+            self->user_to_transmitter_link[i][j] = create_link(i, j, LINK_CAPACITY, user_txer_delay);
         }
     }
 
     for (int i = 0; i < NUM_OF_TXERS; ++i) {
         for (int j = 0; j < NUM_OF_EDGES; ++j) {
-            self->transmitter_to_edge_link[i][j] = create_link(i, j, LINK_CAPACITY);
+            self->transmitter_to_edge_link[i][j] = create_link(i, j, LINK_CAPACITY, txer_edge_delay);
         }
     }
 
     for (int i = 0; i < NUM_OF_EDGES; ++i) {
         for (int j = 0; j < NUM_OF_CDNS; ++j) {
-            self->edge_to_cdn_link[i][j] = create_link(i, j, LINK_CAPACITY);
+            self->edge_to_cdn_link[i][j] = create_link(i, j, LINK_CAPACITY, edge_cdn_delay);
         }
     }
 
     for (int i = 0; i < NUM_OF_CDNS; ++i) {
         for (int j = 0; j < NUM_OF_EDGES; ++j) {
-            self->cdn_to_edge_link[i][j] = create_link(i, j, LINK_CAPACITY);
+            self->cdn_to_edge_link[i][j] = create_link(i, j, LINK_CAPACITY, edge_cdn_delay);
         }
     }
 
     for (int i = 0; i < NUM_OF_EDGES; ++i) {
         for (int j = 0; j < NUM_OF_TXERS; ++j) {
-            self->edge_to_transmitter_link[i][j] = create_link(i, j, LINK_CAPACITY);
+            self->edge_to_transmitter_link[i][j] = create_link(i, j, LINK_CAPACITY, txer_edge_delay);
         }
     }
 
     for (int i = 0; i < NUM_OF_TXERS; ++i) {
         for (int j = 0; j < NUM_OF_USERS; ++j) {
-            self->transmitter_to_user_link[i][j] = create_link(i, j, LINK_CAPACITY);
+            self->transmitter_to_user_link[i][j] = create_link(i, j, LINK_CAPACITY, user_txer_delay);
         }
     }
 

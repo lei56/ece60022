@@ -44,6 +44,18 @@
 #define LINK_CAPACITY 50
 #define MAX_CONTENT_IDS_PER_USER 10
 
+#define USER_TXER_DELAY 1
+#define TXER_EDGE_DELAY 4
+#define EDGE_CDN_DELAY 10
+
+#define TXER_MEMORY_DELAY 1
+#define EDGE_MEMORY_DELAY 1
+#define CDN_MEMORY_DELAY 1
+
+#define TXER_CACHE_SIZE 5
+#define EDGE_CACHE_SIZE 50
+#define CDN_CACHE_SIZE 1000
+
 #define MTU 1500
 
 #endif

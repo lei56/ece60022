@@ -100,7 +100,25 @@ void work_per_timeslot() {
         }
 
 /*---------------------------------------------------------------------------*/
-                                  //UPDATE PARAMETERS
+                                  //LINK -- UPDATE
+/*---------------------------------------------------------------------------*/
+        for (int i = 0; i < NUM_OF_USERS; i++) {            
+            update_link(links->user_to_transmitter_link[i][i / USERS_PER_TXER]);
+            update_link(links->transmitter_to_user_link[i / USERS_PER_TXER][i]);
+        }
+
+        for (int i = 0; i < NUM_OF_TXERS; i++) {
+            update_link(links->transmitter_to_edge_link[i][i / TXERS_PER_EDGE]);
+            update_link(links->edge_to_transmitter_link[i / TXERS_PER_EDGE][i]);
+        }
+
+        for (int i = 0; i < NUM_OF_EDGES; i++) {
+            update_link(links->edge_to_cdn_link[i][0]);
+            update_link(links->cdn_to_edge_link[0][i]);
+        }
+
+/*---------------------------------------------------------------------------*/
+                                  //PARAMETERS -- UPDATE
 /*---------------------------------------------------------------------------*/
         if (curr_timeslot >= max_timeslot) {
             return;
@@ -206,7 +224,7 @@ void initialize_network(arguments_t * arguments) {
     // create cdn
     cdn = create_cdn(0, arguments->cdn_cache_size, arguments->cdn_memory_access_delay);
     // create links
-    links = create_links();
+    links = create_links(arguments->user_txer_delay, arguments->txer_edge_delay, arguments->edge_cdn_delay);
 
     return;
 }
