@@ -3,10 +3,10 @@
 // parameters
 int timeslot_len = 100; // number of ns per timeslot
 int curr_timeslot = 0;
-int enable_edge_caching = 0;
-int enable_transmitter_caching = 0;
+int enable_edge_caching = 1;
+int enable_transmitter_caching = 1;
 int load = 100; // load value 1-100: frequency of packet generation = load%
-int max_timeslot = 100;
+int max_timeslot = 10000;
 
 // network
 user_t * users[NUM_OF_USERS];

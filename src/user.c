@@ -35,8 +35,6 @@ int user_receive_packets(user_t * self, links_t * links, int timeslot) {
         int pkt_in_flight_time = pkt->time_content_received - pkt->time_request_sent;
         self->avg_content_delay = (self->avg_content_delay * self->pkts_received + pkt_in_flight_time) / (self->pkts_received + 1);
         self->pkts_received++;
-        printf("received packet with delay %d\n", pkt_in_flight_time);
-        printf("avg delay is now %0.2f\n", self->avg_content_delay);
         free(pkt);
     }
 
