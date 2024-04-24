@@ -11,7 +11,16 @@ lib/
 src/
 - Source code for each module. The primary driver file is driver.c.
 
+test/
+- Test and debugging code.
+
 traces/
 - Example tracefiles. Traces are organized in order of: flow ID, source user, flow size in packets, number of content IDs accessed by flow.
 
-Use run.sh to compile and run code.
+scripts/
+- Important scripts, such as tracefile generation.
+
+graphs/
+- Collected data, and scripts to process data into graphs.
+
+Use run_0.sh and run_1.sh as example to compile and run code.
